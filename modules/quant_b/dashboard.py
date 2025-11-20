@@ -1,52 +1,85 @@
 import streamlit as st
 import sys
 import os
+import pandas as pd
+import plotly.express as px
 
-# --- CORRECTION DU CHEMIN (PATH FIX) ---
-# On ajoute le dossier racine du projet au chemin de recherche de Python
+# --- PATH FIX ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.abspath(os.path.join(current_dir, "../../"))
 sys.path.append(root_dir)
-# ---------------------------------------
+# ----------------
 
-import plotly.express as px
 from modules.quant_b.data_retrieval import get_multiple_data
 from modules.quant_b.portfolio import simulate_portfolio
 
 def display_quant_b_dashboard():
-    st.header("💰 Gestion de Portefeuille (Quant B)")
+    st.set_page_config(page_title="Dashboard Quant B", layout="wide")
+    st.title("💰 Gestion de Portefeuille (Quant B)")
 
-    # 1. Contrôles Utilisateur
-    st.sidebar.subheader("Paramètres du Portefeuille")
+    # --- SIDEBAR ---
+    st.sidebar.header("Paramètres")
     default_tickers = "AAPL,GOOGL,TSLA,MSFT"
-    tickers = st.sidebar.text_input("Actifs (séparés par virgule)", default_tickers).split(',')
-    tickers = [t.strip().upper() for t in tickers]
+    tickers_input = st.sidebar.text_input("Actifs (via Yahoo Finance)", default_tickers)
+    tickers = [t.strip().upper() for t in tickers_input.split(',')]
 
-    # 2. Récupération des données
-    if st.sidebar.button("Lancer l'analyse"):
+    # --- MAIN LOGIC ---
+    if st.sidebar.button("🔄 Lancer l'analyse", type="primary"):
         try:
-            with st.spinner('Téléchargement des données...'):
+            with st.spinner(f'Récupération des données pour {tickers}...'):
                 df_prices = get_multiple_data(tickers)
             
-            st.success("Données récupérées !")
+            if df_prices.empty:
+                st.error("Aucune donnée récupérée. Vérifiez les symboles.")
+                return
+
+            st.success("Données chargées avec succès !")
+
+            # Calculs préliminaires (Rendements)
+            returns = df_prices.pct_change().dropna()
             
-            # 3. Poids égaux
+            # Poids (Equipondéré)
             weights = {t: 1/len(tickers) for t in tickers}
-            st.write(f"**Répartition (Equipondéré) :** {weights}")
-
-            # 4. Calcul
+            
+            # Simulation Portefeuille
             portfolio_val = simulate_portfolio(df_prices, weights)
+            
+            # --- AFFICHAGE EN ONGLETS ---
+            tab1, tab2, tab3 = st.tabs(["📈 Performance", "🔥 Corrélation", "📊 Risque & Métriques"])
 
-            # 5. Graphique
-            st.subheader("Performance : Portefeuille vs Actifs")
-            df_normalized = (df_prices / df_prices.iloc[0]) * 100
-            df_normalized['Portfolio'] = portfolio_val
+            with tab1:
+                st.subheader("Comparaison Normalisée (Base 100)")
+                df_normalized = (df_prices / df_prices.iloc[0]) * 100
+                df_normalized['Portfolio'] = portfolio_val
+                
+                fig = px.line(df_normalized, title="Evolution du Portefeuille vs Actifs")
+                st.plotly_chart(fig, use_container_width=True)
 
-            fig = px.line(df_normalized, title="Comparaison Base 100")
-            st.plotly_chart(fig, use_container_width=True)
+            with tab2:
+                st.subheader("Matrice de Corrélation des Rendements")
+                st.markdown("Une valeur proche de **1** signifie que les actifs bougent ensemble.")
+                
+                corr_matrix = returns.corr()
+                fig_corr = px.imshow(corr_matrix, text_auto=True, color_continuous_scale='RdBu_r', aspect="auto")
+                st.plotly_chart(fig_corr, use_container_width=True)
+
+            with tab3:
+                st.subheader("Analyse de Volatilité (Risque)")
+                
+                # Calcul volatilité (Standard Deviation)
+                volatility = returns.std()
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write("**Volatilité par Actif :**")
+                    st.bar_chart(volatility)
+                
+                with col2:
+                    st.write("**Statistiques descriptives :**")
+                    st.dataframe(returns.describe())
 
         except Exception as e:
-            st.error(f"Erreur : {e}")
+            st.error(f"Une erreur est survenue : {e}")
 
 if __name__ == "__main__":
     display_quant_b_dashboard()
