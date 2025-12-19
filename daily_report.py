@@ -4,28 +4,22 @@ import numpy as np
 from datetime import datetime
 import os
 
-# 설정
 TICKER = "EURKRW=X"
 REPORT_FILE = "daily_report.txt"
 
 def calculate_metrics(ticker):
-    # 오늘 데이터 가져오기
     data = yf.download(ticker, period="1y", interval="1d", progress=False, auto_adjust=False)
 
-    # MultiIndex 처리 (데이터 껍질 벗기기)
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
 
-    # 최신 데이터
     today_data = data.iloc[-1]
     close_price = float(today_data['Close'])
     open_price = float(today_data['Open'])
-
-    # 수익률 및 변동성 계산
+    
     data['Return'] = data['Close'].pct_change()
-    volatility = data['Return'].std() * np.sqrt(252) # 연환산 변동성
+    volatility = data['Return'].std() * np.sqrt(252) 
 
-    # MDD (최대 낙폭) 계산
     cum_ret = (1 + data['Return']).cumprod()
     peak = cum_ret.cummax()
     mdd = ((cum_ret - peak) / peak).min()
@@ -46,8 +40,7 @@ Volatility (Ann.): {vol:.2%}
 Max Drawdown: {mdd:.2%}
 -----------------------------------
 """
-        # 파일에 추가 (Append mode)
-        # 리눅스 서버의 절대 경로를 사용하여 저장
+
         file_path = os.path.join(os.getcwd(), REPORT_FILE)
         with open(file_path, "a") as f:
             f.write(report_content)
