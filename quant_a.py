@@ -5,28 +5,21 @@ import numpy as np
 import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 
-# ==========================================
-# 1. Data Loading Function (Robust Ver.)
-# ==========================================
+# 1. Data Loading Function 
 def load_data(ticker, period="2y", interval="1d"):
-    # 데이터를 받아옵니다.
     data = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
-    
-    # [중요] 데이터가 '표 안의 표' 형태(MultiIndex)로 오면 껍질을 벗깁니다.
+
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
         
     data.dropna(inplace=True)
     return data
 
-# ==========================================
 # 2. Strategy Logic
-# ==========================================
 def apply_strategy(df, strategy_type, params):
     signals = pd.DataFrame(index=df.index)
     signals['Signal'] = 0.0
 
-    # [중요] Close 컬럼이 1줄짜리 숫자인지 확실하게 만듭니다.
     close_price = df['Close']
     
     if strategy_type == "SMA Crossover":
@@ -46,13 +39,10 @@ def apply_strategy(df, strategy_type, params):
         )
     return signals
 
-# ==========================================
 # 3. Machine Learning: Linear Regression
-# ==========================================
 def predict_next_day(df):
     df_ml = df.copy()
     
-    # Close 데이터만 깔끔하게 추출
     close_col = df_ml['Close']
     
     for i in range(1, 6):
@@ -70,12 +60,9 @@ def predict_next_day(df):
     recent_data = close_col.tail(5).values[::-1].reshape(1, -1)
     prediction = model.predict(recent_data)[0]
     
-    # [중요] 예측값을 무조건 단순 숫자로 변환 (NumPy array -> float)
     return float(prediction)
 
-# ==========================================
 # 4. Metrics Calculation
-# ==========================================
 def calculate_metrics(daily_returns):
     strategy_mean = daily_returns.mean() * 252
     strategy_std = daily_returns.std() * np.sqrt(252)
@@ -86,9 +73,7 @@ def calculate_metrics(daily_returns):
     mdd = ((cum_ret - peak) / peak).min()
     return sharpe, mdd
 
-# ==========================================
 # 5. Main UI Rendering
-# ==========================================
 def render_quant_a():
     st.title("Quant A: Analysis & AI Prediction")
     st.markdown("---")
@@ -143,12 +128,9 @@ def render_quant_a():
                 st.markdown("---")
                 st.subheader("🤖 AI Price Prediction (Bonus Feature)")
                 
-                # [에러 해결 핵심 포인트]
-                # .item()을 사용하여 데이터 껍질을 완전히 벗겨내어 순수한 숫자만 남김
                 try:
                     predicted_price = predict_next_day(df)
                     
-                    # 현재가 가져오기 (안전장치 추가)
                     raw_current = df['Close'].iloc[-1]
                     if hasattr(raw_current, 'item'):
                         current_price = raw_current.item()
