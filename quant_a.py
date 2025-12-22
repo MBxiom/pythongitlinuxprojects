@@ -5,22 +5,23 @@ import numpy as np
 import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 
-# ==========================================
-# 1. Data Loading Function (Robust Ver.)
-# ==========================================
+# 1. Data Loading Function 
 def load_data(ticker, period="2y", interval="1d"):
+quant-a
    
     data = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
     
+
+    data = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
+
+main
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
         
     data.dropna(inplace=True)
     return data
 
-# ==========================================
 # 2. Strategy Logic
-# ==========================================
 def apply_strategy(df, strategy_type, params):
     signals = pd.DataFrame(index=df.index)
     signals['Signal'] = 0.0
@@ -44,9 +45,7 @@ def apply_strategy(df, strategy_type, params):
         )
     return signals
 
-# ==========================================
 # 3. Machine Learning: Linear Regression
-# ==========================================
 def predict_next_day(df):
     df_ml = df.copy()
     
@@ -69,9 +68,7 @@ def predict_next_day(df):
     
     return float(prediction)
 
-# ==========================================
 # 4. Metrics Calculation
-# ==========================================
 def calculate_metrics(daily_returns):
     strategy_mean = daily_returns.mean() * 252
     strategy_std = daily_returns.std() * np.sqrt(252)
@@ -82,9 +79,7 @@ def calculate_metrics(daily_returns):
     mdd = ((cum_ret - peak) / peak).min()
     return sharpe, mdd
 
-# ==========================================
 # 5. Main UI Rendering
-# ==========================================
 def render_quant_a():
     st.title("Quant A: Analysis & AI Prediction")
     st.markdown("---")
@@ -137,7 +132,7 @@ def render_quant_a():
 
             if show_ml:
                 st.markdown("---")
-                st.subheader("🤖 AI Price Prediction (Bonus Feature)")
+                st.subheader("AI Price Prediction (Bonus Feature)")
                 
                 try:
                     predicted_price = predict_next_day(df)
