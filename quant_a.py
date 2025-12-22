@@ -7,8 +7,14 @@ from sklearn.linear_model import LinearRegression
 
 # 1. Data Loading Function 
 def load_data(ticker, period="2y", interval="1d"):
+quant-a
+   
+    data = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
+    
+
     data = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
 
+main
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
         
@@ -126,7 +132,7 @@ def render_quant_a():
 
             if show_ml:
                 st.markdown("---")
-                st.subheader("🤖 AI Price Prediction (Bonus Feature)")
+                st.subheader("AI Price Prediction (Bonus Feature)")
                 
                 try:
                     predicted_price = predict_next_day(df)
