@@ -4,11 +4,11 @@ This project is a dashboard for financial data analysis and stock price predicti
 It is deployed on AWS EC2.
 
 ## 1. Live Link
- URL: http://13.38.4.57:8501
+* **URL:** http://13.38.4.57:8501
 
 ## 2. My Features (Quant A)
-* Stock Analysis: Moving Average & Momentum Strategy.
-* AI Prediction (Bonus): Predicted next day's price using Linear Regression.
+* **Stock Analysis:** Moving Average & Momentum Strategy.
+* **AI Prediction (Bonus):** Predicted next day's price using Linear Regression.
 
 ## 3. How to Run (Commands)
 If you want to run this locally:
@@ -24,7 +24,6 @@ pip install streamlit yfinance pandas scikit-learn plotly
 # 3. Run dashboard
 streamlit run main.py
 
-4. Automation (Cron Job)
+Automation (Cron Job)
 Used Linux crontab to run the report automatically every day at 8 PM.
-
 0 20 * * * /usr/bin/python3 /home/ec2-user/pythongitlinuxprojects/daily_report.py >> /home/ec2-user/pythongitlinuxprojects/cron.log 2>&1
