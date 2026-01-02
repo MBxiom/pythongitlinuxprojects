@@ -1,4 +1,4 @@
-# Financial Dashboard (Quant A)
+# Financial Dashboard 
 
 This project is a dashboard for financial data analysis and stock price prediction.
 It is deployed on AWS EC2.
