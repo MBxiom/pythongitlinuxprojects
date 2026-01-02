@@ -34,13 +34,13 @@ def calculate_portfolio(weights, data):
     
     total_return_pct = (cumulative_return.iloc[-1] / 100) - 1
 
-    # [New Feature] Diversification Effect
+    #  Diversification Effect
     # Formula: Weighted Avg Volatility of Assets - Portfolio Volatility
     asset_volatilities = returns.std() * np.sqrt(252)
     weighted_avg_vol = np.dot(weights, asset_volatilities)
     diversification_effect = weighted_avg_vol - annual_volatility
 
-    # [New Feature] Correlation Matrix
+    # Correlation Matrix
     correlation_matrix = returns.corr()
     
     return {
