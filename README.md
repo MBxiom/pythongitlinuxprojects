@@ -8,7 +8,6 @@ This project is an integrated financial platform designed to support portfolio m
 The application retrieves real-time financial data and provides an interactive dashboard for professional use.
 
 ## Team Members
-**Group 12**
 * **Member 1 (Quant A):** Seunghyeon Kim
 * **Member 2 (Quant B):** Martin Bouleuc
 
@@ -45,22 +44,28 @@ git clone [https://github.com/MBxiom/pythongitlinuxprojects.git](https://github.
 cd pythongitlinuxprojects
 
 2. Install Dependencies
-pip install -r requirements.txt
+Bash
 
+pip install -r requirements.txt
 3. Run the Dashboard
+Bash
+
 streamlit run main.py
 Access the dashboard at: http://localhost:8501
 
-Automation (Cron Job)
+🕒 Automation (Cron Job)
 We used Linux crontab to run the report automatically every day at 8 PM.
+
+Bash
 
 0 20 * * * /usr/bin/python3 /home/ec2-user/pythongitlinuxprojects/daily_report.py >> /home/ec2-user/pythongitlinuxprojects/cron.log 2>&1
 
 Project Structure
-main.py: Entry point of the Streamlit application.
 
-modules/: Contains quant_a and quant_b logic packages.
+- main.py: Entry point of the Streamlit application.
 
-daily_report.py: Script for generating automated daily reports.
+- modules/: Contains quant_a and quant_b logic packages.
 
-requirements.txt: List of dependencies.
+- daily_report.py: Script for generating automated daily reports.
+
+- requirements.txt: List of dependencies.
