@@ -44,11 +44,11 @@ git clone [https://github.com/MBxiom/pythongitlinuxprojects.git](https://github.
 cd pythongitlinuxprojects
 
 2. Install Dependencies
-
+```bash
 pip install -r requirements.txt
 
 3. Run the Dashboard
-
+```bash
 streamlit run main.py
 
 Access the dashboard at: http://localhost:8501
@@ -56,7 +56,7 @@ Access the dashboard at: http://localhost:8501
 Automation (Cron Job)
 We used Linux crontab to run the report automatically every day at 8 PM.
 
-
+```bash
 0 20 * * * /usr/bin/python3 /home/ec2-user/pythongitlinuxprojects/daily_report.py >> /home/ec2-user/pythongitlinuxprojects/cron.log 2>&1
 
 Project Structure
