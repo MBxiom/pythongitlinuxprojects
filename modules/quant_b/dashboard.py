@@ -84,18 +84,28 @@ def display_quant_b_dashboard():
         val = st.sidebar.slider(f"Weight: {ticker}", 0.0, 1.0, 1.0/len(selected_tickers), 0.05)
         weights.append(val)
 
-    # searching for data
+   # searching for data
     @st.cache_data
     def get_data(tickers):
         try:
-            # Download data using yfinance
-            df = yf.download(tickers, period="2y")['Adj Close']
-            # Ensure format is DataFrame even for single asset (edge case handling)
+            # On ajoute group_by='ticker' pour stabiliser le format
+            # et threads=False pour éviter les conflits
+            df = yf.download(tickers, period="2y", group_by='column', progress=False)
+            
+            # Gestion sécurisée : on cherche 'Adj Close' ou 'Close'
+            target_col = 'Adj Close' if 'Adj Close' in df.columns else 'Close'
+            
+            if target_col in df.columns:
+                df = df[target_col]
+            
+            # Ensure format is DataFrame
             if isinstance(df, pd.Series): 
                 df = df.to_frame()
-            # Drop columns with all NaNs and then drop rows with NaNs
+                
             return df.dropna(axis=1, how='all').dropna()
+            
         except Exception as e:
+            st.error(f"Erreur technique yfinance : {e}") # Affiche la vraie erreur pour comprendre
             return pd.DataFrame()
 
     data = get_data(selected_tickers)
