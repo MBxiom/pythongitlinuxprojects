@@ -34,7 +34,7 @@ This project is an integrated financial platform designed to support portfolio m
 
 ---
 
-## 🛠️ Installation & Usage
+## Installation & Usage
 
 ### Prerequisites
 * Python 3.9+
@@ -45,9 +45,6 @@ This project is an integrated financial platform designed to support portfolio m
 ```bash
 git clone [https://github.com/MBxiom/pythongitlinuxprojects.git](https://github.com/MBxiom/pythongitlinuxprojects.git)
 cd pythongitlinuxprojects
-
-## 3. How to Run (Commands)
-If you want to run this locally:
 
 ```bash
 # 1. Download code
