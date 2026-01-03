@@ -40,5 +40,71 @@ If you want to run this locally, follow these steps:
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/MBxiom/pythongitlinuxprojects.git](https://github.com/MBxiom/pythongitlinuxprojects.git)
+git clone https://github.com/MBxiom/pythongitlinuxprojects.git
 cd pythongitlinuxprojects
+```
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the Dashboard
+```bash
+streamlit run main.py
+```
+
+Access the dashboard at: http://localhost:8501
+
+### Automation (Cron Job)
+We used Linux crontab to run the report automatically every day at 8 PM.
+```bash
+0 20 * * * /usr/bin/python3 /home/ec2-user/pythongitlinuxprojects/daily_report.py >> /home/ec2-user/pythongitlinuxprojects/cron.log 2>&1
+```
+
+---
+
+## Project Structure
+* `main.py`: Entry point of the Streamlit application.
+* `modules/`: Contains `quant_a` and `quant_b` logic packages.
+* `daily_report.py`: Script for generating automated daily reports.
+* `requirements.txt`: List of dependencies.
+* `data/`: Folder for storing logs or local data.
+
+---
+
+## Dashboard Preview
+
+### Quant A: Asset Performance
+Real-time analysis of the selected asset with key performance indicators.
+
+![Quant A Performance](images/quant_a_performance.png)
+
+### Quant A: Strategy & Prediction
+Comparison of strategies (Backtest) and Machine Learning price forecast.
+
+![Quant A Prediction](images/quant_a_prediction.png)
+
+### Quant B: Portfolio Management
+Multi-asset allocation, correlation matrix, and diversification metrics.
+
+![Quant B Portfolio](images/quant_b.png)
+
+---
+
+## Tech Stack
+* **Language:** Python 3.10+
+* **Frontend:** Streamlit
+* **Data & Math:** yfinance, Pandas, NumPy
+* **Visualization:** Plotly, Matplotlib
+* **Machine Learning:** Scikit-learn (Linear Regression)
+* **DevOps:** Git, Linux (AWS/VM), Cron
+
+---
+
+## Development Workflow
+* **Git Strategy:** We worked on separate branches (`quant_a` and `quant_b`) to ensure code isolation and minimize conflicts.
+* **Integration:** The `main.py` script serves as a central controller, importing modules dynamically.
+* **Robustness:** Implemented specific error handling for API calls to prevent crashes during data fetch.
+
+---
